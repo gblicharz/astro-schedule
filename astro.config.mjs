@@ -11,5 +11,13 @@ export default defineConfig({
     },
 
     imageService: "cloudflare"
-  })
+  }),
+  vite: {
+   server: {
+     https: {
+       key: './localhost-key.pem',
+       cert: './localhost.pem'
+     }
+   }
+ }
 });

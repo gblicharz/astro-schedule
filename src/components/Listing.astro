@@ -1,0 +1,89 @@
+---
+import { Image } from "astro:assets";
+import type { Show, ShowImage } from "./types";
+
+export interface Props {
+  listing: Show;
+  displayImage: boolean;
+}
+
+const { listing, displayImage } = Astro.props as Props;
+var epImage: ShowImage | undefined;
+
+function getDesiredImage(
+  imageArray: Array<ShowImage | undefined>
+): ShowImage | undefined {
+  var image: ShowImage | undefined;
+  if (imageArray) {
+    image = imageArray.find((img) => img && img.ratio === "16:9");
+  }
+  return image;
+}
+
+if (displayImage) {
+  epImage = listing.episode_images
+    ? getDesiredImage(listing.episode_images)
+    : getDesiredImage(listing.images);
+  if (!epImage) {
+    // Fallback to WTTW placeholder image
+  }
+}
+---
+
+<div class="listing">
+  {
+    epImage && (
+      <div class="epImage">
+        <Image
+          src={epImage.image}
+          alt={listing.episode_title + " poster frame"}
+          width="320"
+          height="180"
+        />
+      </div>
+    )
+  }
+  <div class="episode">
+    <div class="showTitle">{listing.title}</div>
+    <div class="epTitle">{listing.episode_title}</div>
+    <div class="epDesc"><p>{listing.episode_description}</p></div>
+  </div>
+</div>
+
+<style>
+  .listing {
+    position: relative;
+  }
+
+  .epImage {
+    position: relative;
+    overflow: hidden;
+    height: 8rem;
+    width: 100%;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      overflow: hidden;
+    }
+  }
+
+  .episode {
+    padding: 1rem;
+
+    .showTitle {
+      font-weight: 600;
+    }
+
+    .epDesc {
+      p {
+        text-overflow: ellipsis;
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-line-clamp: 4;
+        -webkit-box-orient: vertical;
+      }
+    }
+  }
+</style>

@@ -1,0 +1,75 @@
+---
+import type { string } from "astro:schema";
+import type { Channel, Show } from "./types";
+import Listing from "./Listing.astro";
+
+export interface Props {
+  channel: Channel;
+}
+
+const halfHourWidth = "150px";
+const { channel } = Astro.props as Props;
+var listings: Array<Show> = [];
+if (channel.listings) {
+  listings = channel.listings;
+}
+var shouldDisplayImage = channel.short_name === "WTTWDT" ? true : false;
+---
+
+<li>
+  <ol class="channel">
+    <div class="channel-name">{channel.full_name}</div>
+    {
+      listings.map((show) => (
+        <li class={"minutes-" + show.minutes}>
+          <Listing listing={show} displayImage={shouldDisplayImage} />
+        </li>
+      ))
+    }
+  </ol>
+</li>
+
+<style define:vars={{ halfHourWidth }}>
+  .channel {
+    display: flex;
+   /* outline: solid 1px black; */
+    outline: none;
+    padding: 0;
+    list-style: none;
+
+    > li {
+      outline: solid 1px black;
+      padding: 0;
+      list-style: none;
+    }
+  }
+
+  .channel-name {
+    min-width: var(--halfHourWidth);
+  }
+
+  .minutes-5 {
+    min-width: calc(var(--halfHourWidth) / 6);
+  }
+  .minutes-10 {
+    min-width: calc(var(--halfHourWidth) / 3);
+  }
+  .minutes-15 {
+    min-width: calc(var(--halfHourWidth) / 2);
+  }
+  .minutes-30 {
+    min-width: calc(var(--halfHourWidth) * 1);
+  }
+  .minutes-60 {
+    min-width: calc(var(--halfHourWidth) * 2);
+  }
+  .minutes-90 {
+    min-width: calc(var(--halfHourWidth) * 3);
+  }
+  .minutes-120 {
+    min-width: calc(var(--halfHourWidth) * 4);
+  }
+  .minutes-180 {
+    min-width: calc(var(--halfHourWidth) * 5);
+  }
+</style>
