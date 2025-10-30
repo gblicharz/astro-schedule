@@ -3,19 +3,52 @@ import ChannelRow from "./ChannelRow.astro";
 import type { DayFeed, Channel, RequestInit } from "./types";
 const API_PASSWORD = import.meta.env.API_PASSWORD;
 var feeds: Array<Channel> = [];
+var formattedDate: String = "";
+var displayDate: String = "";
+
+export interface Props {
+  scheduleDate?: String;
+}
 
 try {
+  const { scheduleDate } = Astro.props as Props;
+  var dateObj;
   const myHeaders = new Headers();
   myHeaders.append("X-PBSAUTH", API_PASSWORD);
 
-  const requestOptions:RequestInit = {
+  const requestOptions: RequestInit = {
     method: "GET",
     headers: myHeaders,
     redirect: "follow",
   };
 
+  if (scheduleDate) {
+    // The extra space after the date fixes string-to-date conversions: https://stackoverflow.com/a/34821566
+    dateObj = new Date(`${scheduleDate} `);
+  } else {
+    // default to today
+    dateObj = new Date();
+  }
+
+  const formatter = new Intl.DateTimeFormat("en-US", {
+    year: "numeric",
+    month: "numeric",
+    day: "2-digit",
+  });
+
+  const displayFormatter = new Intl.DateTimeFormat("en-US", {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+
+  const [month, day, year] = formatter.format(dateObj).split("/");
+  formattedDate = `${year}${month}${day}`;
+  displayDate = displayFormatter.format(dateObj);
+
   const response = await fetch(
-    "https://tvss.services.pbs.org/tvss/wttw/day/20251029/?fetch-images",
+    `https://tvss.services.pbs.org/tvss/wttw/day/${formattedDate}/?fetch-images`,
     requestOptions
   );
 
@@ -33,7 +66,9 @@ try {
     feeds = data.feeds.filter(
       (feed) => feed.digital_channel !== "" && feed.digital_channel !== "11.5"
     );
-    feeds = feeds.sort((a, b) => Number(a.digital_channel) - Number(b.digital_channel));
+    feeds = feeds.sort(
+      (a, b) => Number(a.digital_channel) - Number(b.digital_channel)
+    );
   }
 } catch (error) {
   // Display an error message to the user or log the error
@@ -43,8 +78,9 @@ try {
 
 <div id="container">
   <main>
+    <h1>{displayDate}</h1>
     <section id="hero">
-			<ol class="schedule">
+      <ol class="schedule">
         {feeds.map((chan) => <ChannelRow channel={chan} />)}
       </ol>
     </section>

@@ -1,0 +1,24 @@
+---
+import DailySchedule from '../../components/DailySchedule.astro';
+import Layout from '../../layouts/Layout.astro';
+
+// In 'server' mode, opt in to prerendering:
+export const prerender = true;
+
+export async function getStaticPaths() {
+  return [
+    // { params: { /* required */ }, props: { /* optional */ } },
+//    { params: { scheduleDate: Date } }, // [post] is the parameter
+    { params: { date: '2025-10-28' } },
+    { params: { date: '2025-10-29' } },
+    { params: { date: '2025-10-30' } },
+    // ...
+  ];
+}
+
+const { date } = Astro.params;
+---
+
+<Layout>
+	<DailySchedule scheduleDate={date}/>
+</Layout>

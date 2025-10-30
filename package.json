@@ -2,6 +2,7 @@
 	"name": "astro-schedule",
 	"type": "module",
 	"version": "0.0.1",
+	"preview": "wrangler pages dev ./dist",
 	"scripts": {
 		"dev": "astro dev",
 		"build": "astro build",
@@ -16,6 +17,6 @@
 	},
 	"devDependencies": {
 		"@types/node": "^24.9.2",
-		"wrangler": "^4.45.1"
+		"wrangler": "^4.45.3"
 	}
 }
