@@ -1,13 +1,29 @@
 ---
+import type Date from "../pages/day/[date].astro";
 import ChannelRow from "./ChannelRow.astro";
 import type { DayFeed, Channel, RequestInit } from "./types";
 const API_PASSWORD = import.meta.env.API_PASSWORD;
 var feeds: Array<Channel> = [];
 var formattedDate: String = "";
 var displayDate: String = "";
+var previousDate: String = "";
+var nextDate: String = "";
 
 export interface Props {
   scheduleDate?: String;
+}
+
+function dateAsString(date: Date, offset: number = 0) {
+  var localDate = new Date(date);
+  const formatter = new Intl.DateTimeFormat("en-US", {
+    year: "numeric",
+    month: "numeric",
+    day: "2-digit",
+  });
+
+  localDate.setDate(localDate.getDate() + offset);
+  const [month, day, year] = formatter.format(localDate).split("/");
+  return `${year}${month}${day}`;
 }
 
 try {
@@ -23,18 +39,19 @@ try {
   };
 
   if (scheduleDate) {
-    // The extra space after the date fixes string-to-date conversions: https://stackoverflow.com/a/34821566
-    dateObj = new Date(`${scheduleDate} `);
+    const year = parseInt(scheduleDate.substring(0, 4));
+    const month = parseInt(scheduleDate.substring(4, 6)) - 1; // Subtract 1 for zero-indexed month
+    const day = parseInt(scheduleDate.substring(6, 8));
+
+    dateObj = new Date(year, month, day);
   } else {
     // default to today
     dateObj = new Date();
   }
 
-  const formatter = new Intl.DateTimeFormat("en-US", {
-    year: "numeric",
-    month: "numeric",
-    day: "2-digit",
-  });
+  formattedDate = dateAsString(dateObj);
+  previousDate = dateAsString(dateObj, -1);
+  nextDate = dateAsString(dateObj, 1);
 
   const displayFormatter = new Intl.DateTimeFormat("en-US", {
     weekday: "long",
@@ -43,8 +60,6 @@ try {
     day: "numeric",
   });
 
-  const [month, day, year] = formatter.format(dateObj).split("/");
-  formattedDate = `${year}${month}${day}`;
   displayDate = displayFormatter.format(dateObj);
 
   const response = await fetch(
@@ -78,9 +93,14 @@ try {
 
 <div id="container">
   <main>
-    <h1>{displayDate}</h1>
+    <div class="nav">
+      <a href={"/day/" + previousDate}>&lt;</a>
+      <h1>{displayDate}</h1>
+      <a href={"/day/" + nextDate}>&gt;</a>
+    </div>
     <section id="hero">
       <ol class="schedule">
+        <ChannelRow />
         {feeds.map((chan) => <ChannelRow channel={chan} />)}
       </ol>
     </section>
@@ -112,6 +132,23 @@ try {
     flex-direction: column;
     justify-content: center;
     padding: 16px;
+  }
+
+  .nav {
+    display: flex;
+    flex-direction: row;
+    align-items: center; /* Centers items horizontally */
+    justify-content: center;
+
+    a {
+      text-decoration: none;
+      margin: 0 2rem;
+    }
+    h1 {
+      display: inline-block;
+      width: 100%;
+      text-align: center;
+    }
   }
 
   h1 {

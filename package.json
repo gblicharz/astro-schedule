@@ -13,6 +13,7 @@
 	},
 	"dependencies": {
 		"@astrojs/cloudflare": "^12.6.10",
+		"@unpic/astro": "^1.0.1",
 		"astro": "^5.15.2"
 	},
 	"devDependencies": {

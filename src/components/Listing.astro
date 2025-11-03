@@ -1,4 +1,5 @@
 ---
+//import { Image } from '@unpic/astro';
 import { Image } from "astro:assets";
 import type { Show, ShowImage } from "./types";
 
@@ -21,7 +22,7 @@ function getDesiredImage(
 }
 
 if (displayImage) {
-  epImage = listing.episode_images
+  epImage = listing.episode_images && listing.episode_images.length > 0
     ? getDesiredImage(listing.episode_images)
     : getDesiredImage(listing.images);
   if (!epImage) {
@@ -35,10 +36,10 @@ if (displayImage) {
     epImage && (
       <div class="epImage">
         <Image
-          src={epImage.image}
+          src={epImage.image + "?format=webp&crop=640x360"}
           alt={listing.episode_title + " poster frame"}
-          width="320"
-          height="180"
+          width={320}
+          height={180}
         />
       </div>
     )

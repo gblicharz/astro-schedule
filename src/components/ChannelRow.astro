@@ -1,38 +1,63 @@
 ---
-import type { string } from "astro:schema";
 import type { Channel, Show } from "./types";
 import Listing from "./Listing.astro";
 
 export interface Props {
-  channel: Channel;
+  channel?: Channel;
 }
 
 const halfHourWidth = "150px";
 const { channel } = Astro.props as Props;
 var listings: Array<Show> = [];
-if (channel.listings) {
+var timeSlots: Array<String> = [];
+if (channel && channel.listings) {
   listings = channel.listings;
+} else {
+  for (let hour = 0; hour < 24; hour++) {
+    for (let minute = 0; minute < 60; minute += 30) {
+      const formattedHour = hour == 0 || hour == 12 ? "12" : hour >= 12 ? String(hour-12) : String(hour);
+      const formattedMinute = String(minute).padStart(2, "0");
+      const ampm = hour < 12 ? "am" : "pm";
+      timeSlots.push(`${formattedHour}:${formattedMinute} ${ampm}`);
+    }
+  }
 }
-var shouldDisplayImage = channel.short_name === "WTTWDT" ? true : false;
+var shouldDisplayImage =
+  channel && channel.short_name === "WTTWDT" ? true : false;
 ---
 
-<li>
-  <ol class="channel">
-    <div class="channel-name">{channel.full_name}</div>
-    {
-      listings.map((show) => (
-        <li class={"minutes-" + show.minutes}>
-          <Listing listing={show} displayImage={shouldDisplayImage} />
-        </li>
-      ))
-    }
-  </ol>
-</li>
-
+{
+  !channel && (
+    <li>
+      <ol class="channel">
+        <div class="channel-name" />
+        {timeSlots.map((timeSlot) => (
+          <li class={"minutes-30"}>
+            <div class="time">{timeSlot}</div>
+          </li>
+        ))}        
+      </ol>
+    </li>
+  )
+}
+{
+  channel && (
+    <li>
+      <ol class="channel">
+        <div class="channel-name">{channel.full_name}</div>
+        {listings.map((show) => (
+          <li class={"minutes-" + show.minutes}>
+            <Listing listing={show} displayImage={shouldDisplayImage} />
+          </li>
+        ))}
+      </ol>
+    </li>
+  )
+}
 <style define:vars={{ halfHourWidth }}>
   .channel {
     display: flex;
-   /* outline: solid 1px black; */
+    /* outline: solid 1px black; */
     outline: none;
     padding: 0;
     list-style: none;
@@ -42,6 +67,10 @@ var shouldDisplayImage = channel.short_name === "WTTWDT" ? true : false;
       padding: 0;
       list-style: none;
     }
+  }
+
+  .time {
+    padding: .5rem;
   }
 
   .channel-name {
