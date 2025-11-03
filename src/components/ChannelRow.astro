@@ -6,12 +6,19 @@ export interface Props {
   channel?: Channel;
 }
 
-const halfHourWidth = "150px";
 const { channel } = Astro.props as Props;
+const minuteClasses: Array<Number> = [5,10,15,30,60,90,120,150,180];
+
 var listings: Array<Show> = [];
-var timeSlots: Array<String> = [];
+var timeSlots: Array<String> = [];  
+var startOffset = "";
 if (channel && channel.listings) {
   listings = channel.listings;
+
+  // make sure first show start time is "0000"
+  if (listings[0].start_time !== "0000") {
+    startOffset = "offset-minutes-" + Number(listings[0].start_time);
+  }
 } else {
   for (let hour = 0; hour < 24; hour++) {
     for (let minute = 0; minute < 60; minute += 30) {
@@ -22,8 +29,32 @@ if (channel && channel.listings) {
     }
   }
 }
-var shouldDisplayImage =
-  channel && channel.short_name === "WTTWDT" ? true : false;
+var shouldDisplayImage = channel && channel.short_name === "WTTWDT" ? true : false;
+
+function getContainerClasses (show:Show, index: number): string {
+  var returnClasses = "";
+
+  if (index == 0 && listings[0].start_time !== "0000"){
+    returnClasses += "offset-minutes-" + Number(listings[0].start_time) + " ";
+  }
+  
+  if (minuteClasses.includes(show.minutes)) {
+    returnClasses += "minutes-" + show.minutes;
+  }
+
+  return returnClasses;
+}  
+
+function getContainerStyles(show:Show, index: number): string {
+  var returnStyles = "";
+
+  if (!minuteClasses.includes(show.minutes)) {
+    returnStyles = `min-width: calc(var(--halfHourWidth) * ${show.minutes/30});`;
+  }
+
+  return returnStyles;
+}  
+
 ---
 
 {
@@ -45,8 +76,8 @@ var shouldDisplayImage =
     <li>
       <ol class="channel">
         <div class="channel-name">{channel.full_name}</div>
-        {listings.map((show) => (
-          <li class={"minutes-" + show.minutes}>
+        {listings.map((show, index) => (
+          <li class={getContainerClasses(show, index)} style={getContainerStyles(show, index)}>
             <Listing listing={show} displayImage={shouldDisplayImage} />
           </li>
         ))}
@@ -54,7 +85,12 @@ var shouldDisplayImage =
     </li>
   )
 }
-<style define:vars={{ halfHourWidth }}>
+<style>
+
+  :root {
+    --halfHourWidth: 150px;
+  }
+
   .channel {
     display: flex;
     /* outline: solid 1px black; */
@@ -98,7 +134,28 @@ var shouldDisplayImage =
   .minutes-120 {
     min-width: calc(var(--halfHourWidth) * 4);
   }
-  .minutes-180 {
+  .minutes-150 {
     min-width: calc(var(--halfHourWidth) * 5);
   }
+  .minutes-180 {
+    min-width: calc(var(--halfHourWidth) * 6);
+  }
+
+  .offset-minutes-5 {
+    margin-left: calc(var(--halfHourWidth) / 6);
+  }
+  .offset-minutes-10 {
+     margin-left: calc(var(--halfHourWidth) / 3);
+  }
+  .offset-minutes-15 {
+    margin-left: calc(var(--halfHourWidth) / 2);
+  }
+  .offset-minutes-30 {
+    margin-left: calc(var(--halfHourWidth) * 1);
+  }
+  .offset-minutes-60 {
+    margin-left: calc(var(--halfHourWidth) * 2);
+  }
+
+
 </style>

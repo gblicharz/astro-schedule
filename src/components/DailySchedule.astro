@@ -1,5 +1,4 @@
 ---
-import type Date from "../pages/day/[date].astro";
 import ChannelRow from "./ChannelRow.astro";
 import type { DayFeed, Channel, RequestInit } from "./types";
 const API_PASSWORD = import.meta.env.API_PASSWORD;
@@ -44,6 +43,8 @@ try {
     const day = parseInt(scheduleDate.substring(6, 8));
 
     dateObj = new Date(year, month, day);
+    // The extra space after the date fixes string-to-date conversions: https://stackoverflow.com/a/34821566
+    //dateObj = new Date(scheduleDate);
   } else {
     // default to today
     dateObj = new Date();

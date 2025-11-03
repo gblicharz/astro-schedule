@@ -18,6 +18,12 @@ function getDesiredImage(
   if (imageArray) {
     image = imageArray.find((img) => img && img.ratio === "16:9");
   }
+  if (!image) {
+    // Try a 2:1 ratio image
+    if (imageArray) {
+      image = imageArray.find((img) => img && img.ratio === "2:1");
+    }    
+  }
   return image;
 }
 
