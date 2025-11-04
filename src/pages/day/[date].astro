@@ -7,11 +7,13 @@ import { dateAsString } from "../../utilities/dates";
 export const prerender = true;
 
 export async function getStaticPaths() {
-  var now = new Date();
   var daysOfYear = [];
+
+  var oneMonthFromNow = new Date();
+  oneMonthFromNow.setDate(oneMonthFromNow.getDate() + 30);
   var sixMonthsAgo = new Date();
   sixMonthsAgo.setDate(sixMonthsAgo.getDate() - 182);
-  for (var d = sixMonthsAgo; d <= now; d.setDate(d.getDate() + 1)) {
+  for (var d = sixMonthsAgo; d <= oneMonthFromNow; d.setDate(d.getDate() + 1)) {
     daysOfYear.push({ params: { date: dateAsString(new Date(d)) } });
   }
 

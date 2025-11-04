@@ -2,7 +2,7 @@ export function dateAsString(date: Date, offset: number = 0) {
   var localDate = new Date(date);
   const formatter = new Intl.DateTimeFormat("en-US", {
     year: "numeric",
-    month: "numeric",
+    month: "2-digit",
     day: "2-digit",
   });
 
