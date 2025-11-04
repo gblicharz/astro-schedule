@@ -9,11 +9,11 @@ export const prerender = true;
 export async function getStaticPaths() {
   var daysOfYear = [];
 
-  var oneMonthFromNow = new Date();
-  oneMonthFromNow.setDate(oneMonthFromNow.getDate() + 30);
-  var sixMonthsAgo = new Date();
-  sixMonthsAgo.setDate(sixMonthsAgo.getDate() - 182);
-  for (var d = sixMonthsAgo; d <= oneMonthFromNow; d.setDate(d.getDate() + 1)) {
+  var twoWeeksFromNow = new Date();
+  twoWeeksFromNow.setDate(twoWeeksFromNow.getDate() + 14);
+  var oneMonthsAgo = new Date();
+  oneMonthsAgo.setDate(oneMonthsAgo.getDate() - 30);
+  for (var d = oneMonthsAgo; d <= twoWeeksFromNow; d.setDate(d.getDate() + 1)) {
     daysOfYear.push({ params: { date: dateAsString(new Date(d)) } });
   }
 
