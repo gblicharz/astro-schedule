@@ -1,5 +1,10 @@
-import type { APIRoute } from 'astro'
-import type { DayFeed, Channel, RequestInit, DayProps } from "../../components/types";
+import type { APIRoute } from "astro";
+import type {
+  DayFeed,
+  Channel,
+  RequestInit,
+  DayProps,
+} from "../../components/types";
 import { dateAsString } from "../../utilities/dates";
 
 export const GET: APIRoute = async (Astro) => {
@@ -69,12 +74,23 @@ export const GET: APIRoute = async (Astro) => {
     feeds = feeds.sort(
       (a, b) => Number(a.digital_channel) - Number(b.digital_channel)
     );
-  }
 
-   return new Response(
-    JSON.stringify({
-      feeds: feeds,
-      dateObj: dateObj
-    }),
-  )
-}
+    return new Response(
+      JSON.stringify({
+        feeds: feeds,
+        dateObj: dateObj,
+      }),
+      {
+        status: 200,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+  } else {
+    return new Response(null, {
+      status: 404,
+      statusText: "Not found",
+    });
+  }
+};

@@ -1,23 +1,40 @@
 ---
-import DailySchedule from '../../components/DailySchedule.astro';
-import Layout from '../../layouts/Layout.astro';
+import DailySchedule from "../../components/DailySchedule.astro";
+import Layout from "../../layouts/Layout.astro";
+import { dateAsString } from "../../utilities/dates";
 
 // In 'server' mode, opt in to prerendering:
-export const prerender = false;
+export const prerender = true;
 
-/*
 export async function getStaticPaths() {
+  var now = new Date();
+  var daysOfYear = [];
+  var sixMonthsAgo = new Date();
+  sixMonthsAgo.setDate(sixMonthsAgo.getDate() - 182);
+  for (var d = sixMonthsAgo; d <= now; d.setDate(d.getDate() + 1)) {
+    daysOfYear.push({ params: { date: dateAsString(new Date(d)) } });
+  }
 
+  return daysOfYear;
+  /*
   return [
-    { params: { date: '2025-10-28' } },
-    { params: { date: '2025-10-29' } },
-    { params: { date: '2025-10-30' } },
+    { params: { date: "20251028" } },
+    { params: { date: "20251029" } },
+    { params: { date: "20251030" } },
   ];
+  */
 }
-*/
+
 const { date } = Astro.params;
 ---
 
 <Layout>
-	<DailySchedule scheduleDate={date}/>
+  <h1>WTTW Schedule</h1>
+  <DailySchedule scheduleDate={date} />
 </Layout>
+
+<style>
+	h1 {
+		text-align: center;
+	}
+</style>

@@ -16,7 +16,7 @@ if (channel && channel.listings) {
   listings = channel.listings;
 
   // make sure first show start time is "0000"
-  if (listings[0].start_time !== "0000") {
+  if (listings[0] && listings[0].start_time !== "0000") {
     startOffset = "offset-minutes-" + Number(listings[0].start_time);
   }
 } else {

@@ -1,9 +1,9 @@
 ---
 import ChannelRow from "./ChannelRow.astro";
-import type { DayFeed, Channel, RequestInit, DayProps, DayAPIResponse } from "./types";
+import type { Channel, DayAPIResponse } from "./types";
 import { dateAsString } from "../utilities/dates";
 import { GET } from "../pages/api/day";
-const API_PASSWORD = import.meta.env.API_PASSWORD;
+
 var feeds: Array<Channel> = [];
 var formattedDate: String = "";
 var displayDate: String = "";
@@ -40,7 +40,7 @@ try {
   <main>
     <div class="nav">
       <a href={"/day/" + previousDate}>&lt;</a>
-      <h1>{displayDate}</h1>
+      <h2 class="title">{displayDate}</h2>
       <a href={"/day/" + nextDate}>&gt;</a>
     </div>
     <section id="hero">
@@ -89,7 +89,7 @@ try {
       text-decoration: none;
       margin: 0 2rem;
     }
-    h1 {
+    .title {
       display: inline-block;
       width: 100%;
       text-align: center;
