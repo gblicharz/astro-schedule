@@ -70,3 +70,12 @@ export interface RequestInit {
   keepalive?: boolean; // Indicates if the request should outlive the page
   signal?: AbortSignal | null; // An AbortSignal object to abort the request
 }
+
+export interface DayProps {
+  scheduleDate?: String;
+}
+
+export interface DayAPIResponse {
+  feeds: Array<Channel>;
+  dateObj: Date;
+}
