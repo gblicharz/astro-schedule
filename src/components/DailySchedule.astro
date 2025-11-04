@@ -5,7 +5,6 @@ import { dateAsString } from "../utilities/dates";
 import { GET } from "../pages/api/day";
 
 var feeds: Array<Channel> = [];
-var formattedDate: String = "";
 var displayDate: String = "";
 var previousDate: String = "";
 var nextDate: String = "";
@@ -17,7 +16,6 @@ try {
   data = await response.json();
   if (data) {
     feeds = data.feeds;
-    formattedDate = dateAsString(data.dateObj);
     previousDate = dateAsString(data.dateObj, -1);
     nextDate = dateAsString(data.dateObj, 1);
 
